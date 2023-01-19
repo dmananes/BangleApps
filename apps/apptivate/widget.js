@@ -57,7 +57,7 @@
           draw: (x, y) => g.setColor(hasFix ? '#0f0' : '#f88').drawImage(atob('DAwBEAKARAKQE4DwHkPqPRGKAEAA'), x, y)
         }
       },
-      acc: function () {
+      /*acc: function () {
         var x = '',
           y = '',
           z = '',
@@ -85,7 +85,7 @@
             Bangle.removeListener('accel', onACC)
           }
         }
-      },
+      },*/
       mag: function () {
         var x = '',
           y = '',
@@ -108,7 +108,13 @@
           fields: ['X', 'Y', 'Z', 'DX', 'DY', 'DZ', 'HEADING'],
           getValues: () => {
             var r = [x, y, z, dx, dy, dz, heading]
-            ;(x = ''), (y = ''), (z = ''), (dx = ''), (dy = ''), (dz = ''), (heading = '')
+            x = ''
+            y = ''
+            z = ''
+            dx = ''
+            dy = ''
+            dz = ''
+            heading = ''
             return r
           },
           start: () => {
@@ -118,7 +124,8 @@
           stop: () => {
             Bangle.removeListener('mag', onMAG)
             Bangle.setCompassPower(0, 'apptivate')
-          }
+          },
+          draw: (x, y) => g.setColor(Bangle.isCharging() ? '#0f0' : '#ff0').drawImage(atob('DAwBAABgH4G4EYG4H4H4H4GIH4AA'), x, y)
         }
       },
       hrm: function () {
