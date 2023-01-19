@@ -1,0 +1,22 @@
+{
+  "id": "apptivate",
+  "name": "Apptivate",
+  "shortName": "Apptivate",
+  "version": "0.01",
+  "description": "Record GPS position, heart rate and more in the background, then download to your PC.",
+  "icon": "app.png",
+  "tags": "tool,outdoors,gps,widget",
+  "supports": ["BANGLEJS", "BANGLEJS2"],
+  "readme": "README.md",
+  "interface": "interface.html",
+  "storage": [
+    { "name": "apptivate.app.js", "url": "app.js" },
+    { "name": "apptivate.img", "url": "app-icon.js", "evaluate": true },
+    { "name": "apptivate.wid.js", "url": "widget.js" },
+    { "name": "apptivate.settings.js", "url": "settings.js" }
+  ],
+  "data": [
+    { "name": "apptivate.json", "url": "app-settings.json" },
+    { "wildcard": "apptivate.log?.csv", "storageFile": true }
+  ]
+}
