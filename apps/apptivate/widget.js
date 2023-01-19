@@ -57,25 +57,29 @@
           draw: (x, y) => g.setColor(hasFix ? '#0f0' : '#f88').drawImage(atob('DAwBEAKARAKQE4DwHkPqPRGKAEAA'), x, y)
         }
       },
-      /*acc: function () {
+      acc: function () {
         var x = '',
           y = '',
           z = '',
           diff = '',
           mag = ''
-        function onACC(xyz) {
-          x = xyz.x
-          y = xyz.y
-          z = xyz.z
-          diff = xyz.diff
-          mag = xyz.mag
+        function onACC(acc) {
+          x = acc.x
+          y = acc.y
+          z = acc.z
+          diff = acc.diff
+          mag = acc.mag
         }
         return {
           name: 'ACC',
           fields: ['X', 'Y', 'Z', 'DIFF', 'MAG'],
           getValues: () => {
             var r = [x, y, z, diff, mag]
-            ;(x = ''), (y = ''), (z = ''), (diff = ''), (mag = '')
+            x = ''
+            y = ''
+            z = ''
+            diff = ''
+            mag = ''
             return r
           },
           start: () => {
@@ -85,7 +89,7 @@
             Bangle.removeListener('accel', onACC)
           }
         }
-      },*/
+      },
       mag: function () {
         var x = '',
           y = '',
