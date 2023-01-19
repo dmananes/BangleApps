@@ -57,6 +57,70 @@
           draw: (x, y) => g.setColor(hasFix ? '#0f0' : '#f88').drawImage(atob('DAwBEAKARAKQE4DwHkPqPRGKAEAA'), x, y)
         }
       },
+      acc: function () {
+        var x = '',
+          y = '',
+          z = '',
+          diff = '',
+          mag = ''
+        function onACC(xyz) {
+          x = xyz.x
+          y = xyz.y
+          z = xyz.z
+          diff = xyz.diff
+          mag = xyz.mag
+        }
+        return {
+          name: 'ACC',
+          fields: ['X', 'Y', 'Z', 'DIFF', 'MAG'],
+          getValues: () => {
+            var r = [x, y, z, diff, mag]
+            ;(x = ''), (y = ''), (z = ''), (diff = ''), (mag = '')
+            return r
+          },
+          start: () => {
+            Bangle.on('accel', onACC)
+          },
+          stop: () => {
+            Bangle.removeListener('accel', onACC)
+          }
+        }
+      },
+      mag: function () {
+        var x = '',
+          y = '',
+          z = '',
+          dx = '',
+          dy = '',
+          dz = '',
+          heading = ''
+        function onMAG(mag) {
+          x = mag.x
+          y = mag.y
+          z = mag.z
+          dx = mag.dx
+          dy = mag.dy
+          dz = mag.dz
+          heading = mag.heading
+        }
+        return {
+          name: 'MAG',
+          fields: ['X', 'Y', 'Z', 'DX', 'DY', 'DZ', 'HEADING'],
+          getValues: () => {
+            var r = [x, y, z, dx, dy, dz, heading]
+            ;(x = ''), (y = ''), (z = ''), (dx = ''), (dy = ''), (dz = ''), (heading = '')
+            return r
+          },
+          start: () => {
+            Bangle.on('mag', onMAG)
+            Bangle.setCompassPower(1, 'apptivate')
+          },
+          stop: () => {
+            Bangle.removeListener('mag', onMAG)
+            Bangle.setCompassPower(0, 'apptivate')
+          }
+        }
+      },
       hrm: function () {
         var bpm = '',
           bpmConfidence = '',
