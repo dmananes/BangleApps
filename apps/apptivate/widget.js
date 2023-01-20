@@ -87,7 +87,8 @@
           },
           stop: () => {
             Bangle.removeListener('accel', onACC)
-          }
+          },
+          draw: (x, y) => g.setColor(Bangle.isCharging() ? '#0f0' : '#ff0').drawImage(atob('DAwBAABgH4G4EYG4H4H4H4GIH4AA'), x, y)
         }
       },
       mag: function () {
