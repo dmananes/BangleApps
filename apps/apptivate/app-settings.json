@@ -1,6 +1,6 @@
 {
   "recording": false,
   "file": "apptivate.log0.csv",
-  "period": 10,
+  "period": 1,
   "record": ["gps"]
 }

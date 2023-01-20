@@ -72,7 +72,7 @@
         }
         return {
           name: 'ACC',
-          fields: ['X', 'Y', 'Z', 'DIFF', 'MAG'],
+          fields: ['ACC_X', 'ACC_Y', 'ACC_Z', 'DIFF', 'MAG'],
           getValues: () => {
             var r = [x, y, z, diff, mag]
             x = ''
@@ -110,7 +110,7 @@
         }
         return {
           name: 'MAG',
-          fields: ['X', 'Y', 'Z', 'DX', 'DY', 'DZ', 'HEADING'],
+          fields: ['MAG_X', 'MAG_Y', 'MAG_Z', 'DX', 'DY', 'DZ', 'HEADING'],
           getValues: () => {
             var r = [x, y, z, dx, dy, dz, heading]
             x = ''
