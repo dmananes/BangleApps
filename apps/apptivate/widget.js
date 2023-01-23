@@ -256,13 +256,12 @@
   }
 
   let writeLog = function () {
-    entriesWritten++
     WIDGETS['apptivate'].draw()
     try {
       var fields = [Math.round(getTime())]
       var fieldsfr = [Math.round(getTime())]
       activeRecorders.forEach((recorder) => {
-        if (!recorder.isFrequent) fields.push.apply(fields, recorder.getValues())
+        if (recorder.isFrequent) fields.push.apply(fields, recorder.getValues())
         else fieldsfr.push.apply(fieldsfr, recorder.getValues())
       })
 
@@ -270,6 +269,8 @@
       if (entriesWritten % fr == 0) {
         if (storageFilefr) storageFilefr.write(fieldsfr.join(',') + '\n')
       }
+
+      entriesWritten++
     } catch (e) {
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!

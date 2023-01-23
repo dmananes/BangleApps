@@ -87,7 +87,7 @@ function showMainMenu() {
       viewTracks()
     },
     /*LANG*/ 'Time Period': {
-      value: settings.period || 10,
+      value: settings.period || 1,
       min: 1,
       max: 120,
       step: 1,
@@ -95,6 +95,18 @@ function showMainMenu() {
       onchange: (v) => {
         settings.recording = false // stop recording if we change anything
         settings.period = v
+        updateSettings()
+      }
+    },
+    /*LANG*/ Frequency: {
+      value: settings.fr || 60,
+      min: 1,
+      max: 120,
+      step: 1,
+      format: (v) => v + ' times',
+      onchange: (v) => {
+        settings.recording = false // stop recording if we change anything
+        settings.fr = v
         updateSettings()
       }
     }
