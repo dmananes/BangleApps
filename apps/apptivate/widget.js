@@ -265,9 +265,9 @@
         else fieldsfr.push.apply(fieldsfr, recorder.getValues())
       })
 
-      if (storageFile) storageFile.write(fields.join(',') + '\n')
+      if (storageFilefr) storageFilefr.write(fieldsfr.join(',') + '\n')
       if (entriesWritten % fr == 0) {
-        if (storageFilefr) storageFilefr.write(fieldsfr.join(',') + '\n')
+        if (storageFile) storageFile.write(fields.join(',') + '\n')
       }
 
       entriesWritten++
