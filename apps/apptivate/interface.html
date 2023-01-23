@@ -285,10 +285,12 @@ ${
     : `<div class="card-body">No GPS info</div>`
 }
            <div class="card-footer">
-             <button class="btn btn-primary" filename="${track.filename}" filenamefr="${track.filenamefr}" trackid="${track.number}" task="downloadkml">Download KML</button>
-             <button class="btn btn-primary" filename="${track.filename}" filenamefr="${track.filenamefr}" trackid="${track.number}" task="downloadgpx">Download GPX</button>
-             <button class="btn btn-primary" filename="${track.filename}" filenamefr="${track.filenamefr}" trackid="${track.number}" task="downloadcsv">Download CSV</button>
-             <button class="btn btn-default" filename="${track.filename}" filenamefr="${track.filenamefr}" trackid="${track.number}" task="delete">Delete</button>
+             <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadkml">Download KML</button>
+             <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadgpx">Download GPX</button>
+             <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadcsv">Download CSV</button>
+             <button class="btn btn-primary" filename="${track.filenamefr}" trackid="${track.number}" task="downloadcsv">Download CSV FR</button>
+             <button class="btn btn-default" filename="${track.filename}" trackid="${track.number}" task="delete">Delete</button>
+             <button class="btn btn-default" filename="${track.filenamefr}" trackid="${track.number}" task="delete">Delete FR</button>
            </div>
          </div>
         `
@@ -324,17 +326,14 @@ ${
               buttons[i].addEventListener('click', (event) => {
                 var button = event.currentTarget
                 var filename = button.getAttribute('filename')
-                var filenamefr = button.getAttribute('filenamefr')
                 var trackid = parseInt(button.getAttribute('trackid'))
                 if (!filename || trackid === undefined) return
                 var task = button.getAttribute('task')
                 if (task == 'delete') {
                   Util.showModal('Deleting Track...')
                   Util.eraseStorageFile(filename, () => {
-                    Util.eraseStorageFile(filenamefr, () => {
-                      Util.hideModal()
-                      getTrackList()
-                    })
+                    Util.hideModal()
+                    getTrackList()
                   })
                 }
                 if (task == 'downloadkml') {
@@ -345,7 +344,6 @@ ${
                 }
                 if (task == 'downloadcsv') {
                   downloadTrack(filename, (track) => saveCSV(track, `Bangle.js Track ${trackid}`))
-                  downloadTrack(filenamefr, (track) => saveCSV(track, `Bangle.js Track ${trackid}`))
                 }
               })
             }
