@@ -1,12 +1,17 @@
 {
+  let minimumBmpConfidence = 80
+  let fr = 60
+
   let storageFile // file for GPS track
+  let storageFilefr
   let entriesWritten = 0
   let activeRecorders = []
   let writeInterval
 
   let loadSettings = function () {
     var settings = require('Storage').readJSON('apptivate.json', 1) || {}
-    settings.period = settings.period || 10
+    settings.period = settings.period || 1
+    settings.fr = settings.fr || 60
     if (!settings.file || !settings.file.startsWith('apptivate.log')) settings.recording = false
     return settings
   }
@@ -33,6 +38,7 @@
           samples++
         }
         return {
+          isFrequent: false,
           name: 'GPS',
           fields: ['Latitude', 'Longitude', 'Altitude'],
           getValues: () => {
@@ -71,6 +77,7 @@
           mag = acc.mag
         }
         return {
+          isFrequent: true,
           name: 'ACC',
           fields: ['ACC_X', 'ACC_Y', 'ACC_Z', 'DIFF', 'MAG'],
           getValues: () => {
@@ -109,6 +116,7 @@
           heading = mag.heading
         }
         return {
+          isFrequent: true,
           name: 'MAG',
           fields: ['MAG_X', 'MAG_Y', 'MAG_Z', 'DX', 'DY', 'DZ', 'HEADING'],
           getValues: () => {
@@ -134,22 +142,21 @@
         }
       },
       hrm: function () {
-        var bpm = '',
-          bpmConfidence = '',
-          src = ''
+        var bpm = ''
         function onHRM(h) {
-          bpmConfidence = h.confidence
-          bpm = h.bpm
-          srv = h.src
+          if (h.confidence >= minimumBmpConfidence) {
+            bpm = h.bpm
+          } else {
+            bpm = -1
+          }
         }
         return {
+          isFrequent: false,
           name: 'HR',
-          fields: ['Heartrate', 'Confidence', 'Source'],
+          fields: ['Heartrate'],
           getValues: () => {
-            var r = [bpm, bpmConfidence, src]
+            var r = [bpm]
             bpm = ''
-            bpmConfidence = ''
-            src = ''
             return r
           },
           start: () => {
@@ -165,6 +172,7 @@
       },
       bat: function () {
         return {
+          isFrequent: false,
           name: 'BAT',
           fields: ['Battery Percentage', 'Battery Voltage', 'Charging'],
           getValues: () => {
@@ -178,6 +186,7 @@
       steps: function () {
         var lastSteps = 0
         return {
+          isFrequent: false,
           name: 'Steps',
           fields: ['Steps'],
           getValues: () => {
@@ -205,6 +214,7 @@
           alt = c.altitude
         }
         return {
+          isFrequent: false,
           name: 'Baro',
           fields: ['Barometer Temperature', 'Barometer Pressure', 'Barometer Altitude'],
           getValues: () => {
@@ -250,8 +260,16 @@
     WIDGETS['apptivate'].draw()
     try {
       var fields = [Math.round(getTime())]
-      activeRecorders.forEach((recorder) => fields.push.apply(fields, recorder.getValues()))
+      var fieldsfr = [Math.round(getTime())]
+      activeRecorders.forEach((recorder) => {
+        if (!recorder.isFrequent) fields.push.apply(fields, recorder.getValues())
+        else fieldsfr.push.apply(fieldsfr, recorder.getValues())
+      })
+
       if (storageFile) storageFile.write(fields.join(',') + '\n')
+      if (entriesWritten % fr == 0) {
+        if (storageFilefr) storageFilefr.write(fieldsfr.join(',') + '\n')
+      }
     } catch (e) {
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!
@@ -274,6 +292,7 @@
     entriesWritten = 0
 
     if (settings.recording) {
+      fr = settings.fr
       // set up recorders
       var recorders = getRecorders() // TODO: order??
       settings.record.forEach((r) => {
@@ -292,13 +311,20 @@
       if (require('Storage').list(settings.file).length) {
         // Append
         storageFile = require('Storage').open(settings.file, 'a')
+        storageFilefr = require('Storage').open(settings.filefr, 'a')
         // TODO: what if loaded modules are different??
       } else {
         storageFile = require('Storage').open(settings.file, 'w')
+        storageFilefr = require('Storage').open(settings.filefr, 'w')
         // New file - write headers
         var fields = ['Time']
-        activeRecorders.forEach((recorder) => fields.push.apply(fields, recorder.fields))
+        var fieldsfr = ['Time']
+        activeRecorders.forEach((recorder) => {
+          if (!recorder.isFrequent) fields.push.apply(fields, recorder.fields)
+          else fieldsfr.push.apply(fieldsfr, recorder.fields)
+        })
         storageFile.write(fields.join(',') + '\n')
+        storageFilefr.write(fieldsfr.join(',') + '\n')
       }
       // start recording...
       WIDGETS['apptivate'].draw()
@@ -306,6 +332,7 @@
     } else {
       WIDGETS['apptivate'].width = 0
       storageFile = undefined
+      storageFilefr = undefined
     }
   }
   // add the widget
@@ -328,6 +355,7 @@
       var settings = loadSettings()
       if (isOn && !settings.recording && !settings.file) {
         settings.file = 'apptivate.log0.csv'
+        settings.filefr = 'apptivate.logfr0.csv'
       } else if (isOn && !forceAppend && !settings.recording && require('Storage').list(settings.file).length) {
         var logfiles = require('Storage').list(/recorder.log.*/)
         var maxNumber = 0
@@ -337,6 +365,7 @@
         var newFileName
         if (maxNumber < 99) {
           newFileName = 'apptivate.log' + (maxNumber + 1) + '.csv'
+          newFileNamefr = 'apptivate.logfr' + (maxNumber + 1) + '.csv'
           updateSettings(settings)
         }
         var buttons = { /*LANG*/ Yes: 'overwrite', /*LANG*/ No: 'cancel' }
@@ -347,6 +376,7 @@
           if (selection === 'overwrite') require('Storage').open(settings.file, 'r').erase()
           if (selection === 'new') {
             settings.file = newFileName
+            settings.filefr = newFileNamefr
             updateSettings(settings)
           }
           // if (selection==="append") // we do nothing - all is fine
