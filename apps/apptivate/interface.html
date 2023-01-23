@@ -242,6 +242,7 @@ ${track.map((pt) => `            <gx:value>${0 | pt.Skin}</gx:value>\n`).join(''
                       trackInfo.headers = trackInfo.headers.split(',')
                       trackList.push({
                         filename: filename,
+                        filenamefr: filename.substring(0, 13) + 'fr' + filename.substring(13, filename.length),
                         number: trackNo,
                         info: trackInfo
                       })
@@ -287,6 +288,7 @@ ${
              <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadkml">Download KML</button>
              <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadgpx">Download GPX</button>
              <button class="btn btn-primary" filename="${track.filename}" trackid="${track.number}" task="downloadcsv">Download CSV</button>
+             <button class="btn btn-primary" filename="${track.filenamefr}" trackid="${track.number}" task="downloadcsv">Download CSV FR</button>
              <button class="btn btn-default" filename="${track.filename}" trackid="${track.number}" task="delete">Delete</button>
            </div>
          </div>
@@ -340,6 +342,7 @@ ${
                   downloadTrack(filename, (track) => saveGPX(track, `Bangle.js Track ${trackid}`))
                 }
                 if (task == 'downloadcsv') {
+                  downloadTrack(filename, (track) => saveCSV(track, `Bangle.js Track ${trackid}`))
                   downloadTrack(filename, (track) => saveCSV(track, `Bangle.js Track ${trackid}`))
                 }
               })
