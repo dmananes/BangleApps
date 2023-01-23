@@ -261,7 +261,7 @@
       var fields = [Math.round(getTime())]
       var fieldsfr = [Math.round(getTime())]
       activeRecorders.forEach((recorder) => {
-        if (recorder.isFrequent) fields.push.apply(fields, recorder.getValues())
+        if (!recorder.isFrequent) fields.push.apply(fields, recorder.getValues())
         else fieldsfr.push.apply(fieldsfr, recorder.getValues())
       })
 
