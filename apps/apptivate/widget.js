@@ -341,7 +341,7 @@
     area: 'tl',
     width: 0,
     draw: function () {
-      if (writeInterval) return
+      if (!writeInterval) return
       g.reset().drawImage(atob('DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=='), this.x + 1, this.y + 2)
       activeRecorders.forEach((recorder, i) => {
         recorder.draw(this.x + 15 + (i >> 1) * 12, this.y + (i & 1) * 12)
