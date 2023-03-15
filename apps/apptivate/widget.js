@@ -95,7 +95,7 @@
           stop: () => {
             Bangle.removeListener('accel', onACC)
           },
-          draw: (x, y) => g.setColor(Bangle.isCharging() ? '#0f0' : '#ff0').drawImage(atob('DAwBAABgH4G4EYG4H4H4H4GIH4AA'), x, y)
+          draw: (x, y) => g.reset().drawImage(atob('DAwBAAMMeeeeeeeecOMMAAMMMMAA'), x, y)
         }
       },
       mag: function () {
@@ -138,7 +138,7 @@
             Bangle.removeListener('mag', onMAG)
             Bangle.setCompassPower(0, 'apptivate')
           },
-          draw: (x, y) => g.setColor(Bangle.isCharging() ? '#0f0' : '#ff0').drawImage(atob('DAwBAABgH4G4EYG4H4H4H4GIH4AA'), x, y)
+          draw: (x, y) => g.reset().drawImage(atob('DAwBAAMMeeeeeeeecOMMAAMMMMAA'), x, y)
         }
       },
       hrm: function () {
@@ -341,7 +341,7 @@
     area: 'tl',
     width: 0,
     draw: function () {
-      if (!writeInterval) return
+      if (writeInterval) return
       g.reset().drawImage(atob('DRSBAAGAHgDwAwAAA8B/D/hvx38zzh4w8A+AbgMwGYDMDGBjAA=='), this.x + 1, this.y + 2)
       activeRecorders.forEach((recorder, i) => {
         recorder.draw(this.x + 15 + (i >> 1) * 12, this.y + (i & 1) * 12)
