@@ -70,11 +70,11 @@
           diff = '',
           mag = ''
         function onACC(acc) {
-          x = acc.x
-          y = acc.y
-          z = acc.z
-          diff = acc.diff
-          mag = acc.mag
+          x = Math.round(acc.x * 100) / 100
+          y = Math.round(acc.y * 100) / 100
+          z = Math.round(acc.z * 100) / 100
+          diff = Math.round(acc.diff * 100) / 100
+          mag = Math.round(acc.mag * 100) / 100
         }
         return {
           isFrequent: true,
@@ -113,7 +113,7 @@
           dx = mag.dx
           dy = mag.dy
           dz = mag.dz
-          heading = mag.heading
+          heading = Math.round(mag.heading)
         }
         return {
           isFrequent: true,
@@ -147,7 +147,7 @@
           if (h.confidence >= minimumBmpConfidence) {
             bpm = h.bpm
           } else {
-            bpm = -1
+            bpm = ''
           }
         }
         return {
@@ -209,9 +209,9 @@
           press = '',
           alt = ''
         function onPress(c) {
-          temp = c.temperature
-          press = c.pressure
-          alt = c.altitude
+          temp = Math.round(c.temperature)
+          press = Math.round(c.pressure)
+          alt = Math.round(c.altitude)
         }
         return {
           isFrequent: false,
