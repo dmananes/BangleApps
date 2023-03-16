@@ -280,7 +280,7 @@
         }
         return {
           isFrequent: false,
-          name: 'Baro',
+          name: 'BaroPress',
           fields: ['Barometer Pressure', 'Barometer Altitude'],
           getValues: () => {
             var r = [press, alt]
