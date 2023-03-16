@@ -99,17 +99,17 @@
         }
       },
       mag: function () {
-        var x = '',
+        var /*x = '',
           y = '',
-          z = '',
+          z = '',*/
           dx = '',
           dy = '',
           dz = '',
           heading = ''
         function onMAG(mag) {
-          x = mag.x
+          /*x = mag.x
           y = mag.y
-          z = mag.z
+          z = mag.z*/
           dx = mag.dx
           dy = mag.dy
           dz = mag.dz
@@ -118,12 +118,12 @@
         return {
           isFrequent: true,
           name: 'MAG',
-          fields: ['MAG_X', 'MAG_Y', 'MAG_Z', 'DX', 'DY', 'DZ', 'HEADING'],
+          fields: ['DX', 'DY', 'DZ', 'HEADING'], // 'MAG_X', 'MAG_Y', 'MAG_Z',
           getValues: () => {
-            var r = [x, y, z, dx, dy, dz, heading]
-            x = ''
+            var r = [dx, dy, dz, heading] // x, y, z,
+            /*x = ''
             y = ''
-            z = ''
+            z = ''*/
             dx = ''
             dy = ''
             dz = ''
