@@ -4,5 +4,6 @@
   "filefr": "apptivate.logfr0.csv",
   "period": 5,
   "fr": 24,
+  "round": true,
   "record": ["acc", "hrm", "mag", "steps", "baro"]
 }

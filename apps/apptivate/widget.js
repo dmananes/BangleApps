@@ -1,6 +1,7 @@
 {
   let minimumBmpConfidence = 80
-  let fr = 60
+  let fr = 24
+  let round = true
 
   let storageFile // file for GPS track
   let storageFilefr
@@ -11,7 +12,8 @@
   let loadSettings = function () {
     var settings = require('Storage').readJSON('apptivate.json', 1) || {}
     settings.period = settings.period || 1
-    settings.fr = settings.fr || 60
+    settings.fr = settings.fr || 24
+    settings.round = settings.round || true
     if (!settings.file || !settings.file.startsWith('apptivate.log')) settings.recording = false
     return settings
   }
@@ -70,11 +72,19 @@
           diff = '',
           mag = ''
         function onACC(acc) {
-          x = Math.round(acc.x * 100) / 100
-          y = Math.round(acc.y * 100) / 100
-          z = Math.round(acc.z * 100) / 100
-          diff = Math.round(acc.diff * 100) / 100
-          mag = Math.round(acc.mag * 100) / 100
+          x = acc.x
+          y = acc.y
+          z = acc.z
+          diff = acc.diff
+          mag = acc.mag
+
+          if (round) {
+            x = Math.round(x * 100) / 100
+            y = Math.round(y * 100) / 100
+            z = Math.round(z * 100) / 100
+            diff = Math.round(diff * 100) / 100
+            mag = Math.round(mag * 100) / 100
+          }
         }
         return {
           isFrequent: true,
@@ -107,7 +117,10 @@
           dx = mag.dx
           dy = mag.dy
           dz = mag.dz
-          heading = Math.round(mag.heading)
+          heading = mag.heading
+          if (round) {
+            heading = Math.round(heading)
+          }
         }
         return {
           isFrequent: true,
@@ -229,7 +242,10 @@
       recorders['baro'] = function () {
         var temp = ''
         function onTemp(c) {
-          temp = Math.round(c.temperature)
+          temp = c.temperature
+          if (round) {
+            temp = Math.round(temp)
+          }
         }
         return {
           isFrequent: false,
@@ -255,8 +271,12 @@
         var press = '',
           alt = ''
         function onPress(c) {
-          press = Math.round(c.pressure)
-          alt = Math.round(c.altitude)
+          press = c.pressure
+          alt = c.altitude
+          if (round) {
+            press = Math.round(press)
+            alt = Math.round(alt)
+          }
         }
         return {
           isFrequent: false,
@@ -338,6 +358,7 @@
 
     if (settings.recording) {
       fr = settings.fr
+      round = settings.round
       // set up recorders
       var recorders = getRecorders() // TODO: order??
       settings.record.forEach((r) => {
