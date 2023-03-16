@@ -79,11 +79,11 @@
           mag = acc.mag
 
           if (round) {
-            x = Math.round(x * 100) / 100
-            y = Math.round(y * 100) / 100
-            z = Math.round(z * 100) / 100
-            diff = Math.round(diff * 100) / 100
-            mag = Math.round(mag * 100) / 100
+            x = Math.round(x * 1000)
+            y = Math.round(y * 1000)
+            z = Math.round(z * 1000)
+            diff = Math.round(diff * 1000)
+            mag = Math.round(mag * 1000)
           }
         }
         return {
