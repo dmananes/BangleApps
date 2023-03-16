@@ -99,17 +99,11 @@
         }
       },
       mag: function () {
-        var /*x = '',
-          y = '',
-          z = '',*/
-          dx = '',
+        var dx = '',
           dy = '',
           dz = '',
           heading = ''
         function onMAG(mag) {
-          /*x = mag.x
-          y = mag.y
-          z = mag.z*/
           dx = mag.dx
           dy = mag.dy
           dz = mag.dz
@@ -118,12 +112,9 @@
         return {
           isFrequent: true,
           name: 'MAG',
-          fields: ['DX', 'DY', 'DZ', 'HEADING'], // 'MAG_X', 'MAG_Y', 'MAG_Z',
+          fields: ['DX', 'DY', 'DZ', 'HEADING'],
           getValues: () => {
-            var r = [dx, dy, dz, heading] // x, y, z,
-            /*x = ''
-            y = ''
-            z = ''*/
+            var r = [dx, dy, dz, heading]
             dx = ''
             dy = ''
             dz = ''
@@ -136,6 +127,37 @@
           },
           stop: () => {
             Bangle.removeListener('mag', onMAG)
+            Bangle.setCompassPower(0, 'apptivate')
+          },
+          draw: (x, y) => g.reset().drawImage(atob('DAwBAAMMeeeeeeeecOMMAAMMMMAA'), x, y)
+        }
+      },
+      magraw: function () {
+        var x = '',
+          y = '',
+          z = ''
+        function onMAGRAW(mag) {
+          x = mag.x
+          y = mag.y
+          z = mag.z
+        }
+        return {
+          isFrequent: true,
+          name: 'MAGRAW',
+          fields: ['MAG_X', 'MAG_Y', 'MAG_Z'],
+          getValues: () => {
+            var r = [x, y, z]
+            x = ''
+            y = ''
+            z = ''
+            return r
+          },
+          start: () => {
+            Bangle.on('mag', onMAGRAW)
+            Bangle.setCompassPower(1, 'apptivate')
+          },
+          stop: () => {
+            Bangle.removeListener('mag', onMAGRAW)
             Bangle.setCompassPower(0, 'apptivate')
           },
           draw: (x, y) => g.reset().drawImage(atob('DAwBAAMMeeeeeeeecOMMAAMMMMAA'), x, y)
@@ -205,21 +227,43 @@
     }
     if (Bangle.getPressure) {
       recorders['baro'] = function () {
-        var temp = '',
-          press = '',
+        var temp = ''
+        function onTemp(c) {
+          temp = Math.round(c.temperature)
+        }
+        return {
+          isFrequent: false,
+          name: 'Baro',
+          fields: ['Barometer Temperature'],
+          getValues: () => {
+            var r = [temp]
+            temp = ''
+            return r
+          },
+          start: () => {
+            Bangle.setBarometerPower(1, 'apptivate')
+            Bangle.on('pressure', onTemp)
+          },
+          stop: () => {
+            Bangle.setBarometerPower(0, 'apptivate')
+            Bangle.removeListener('pressure', onTemp)
+          },
+          draw: (x, y) => g.setColor('#0f0').drawImage(atob('DAwBAAH4EIHIEIHIEIHIEIEIH4AA'), x, y)
+        }
+      }
+      recorders['baropress'] = function () {
+        var press = '',
           alt = ''
         function onPress(c) {
-          temp = Math.round(c.temperature)
           press = Math.round(c.pressure)
           alt = Math.round(c.altitude)
         }
         return {
           isFrequent: false,
           name: 'Baro',
-          fields: ['Barometer Temperature', 'Barometer Pressure', 'Barometer Altitude'],
+          fields: ['Barometer Pressure', 'Barometer Altitude'],
           getValues: () => {
-            var r = [temp, press, alt]
-            temp = ''
+            var r = [press, alt]
             press = ''
             alt = ''
             return r
