@@ -87,7 +87,7 @@ function showMainMenu() {
       viewTracks()
     },
     /*LANG*/ 'Time Period': {
-      value: settings.period || 1,
+      value: settings.period || 5,
       min: 1,
       max: 120,
       step: 1,
@@ -99,7 +99,7 @@ function showMainMenu() {
       }
     },
     /*LANG*/ Frequency: {
-      value: settings.fr || 60,
+      value: settings.fr || 24,
       min: 1,
       max: 120,
       step: 1,
@@ -107,6 +107,15 @@ function showMainMenu() {
       onchange: (v) => {
         settings.recording = false // stop recording if we change anything
         settings.fr = v
+        updateSettings()
+      }
+    },
+    /*LANG*/ Round: {
+      value: !!settings.round || true,
+      format: (v) => (v ? /*LANG*/ 'On' : /*LANG*/ 'Off'),
+      onchange: (v) => {
+        settings.recording = false // stop recording if we change anything
+        settings.round = v
         updateSettings()
       }
     }
