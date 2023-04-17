@@ -329,55 +329,16 @@
         else fieldsfr.push.apply(fieldsfr, recorder.getValues())
       })
 
-      if (storageFilefr) storageFilefr.write(fieldsfr.join(',') + '\n')
-      if (entriesWritten % fr == 0) {
-        if (storageFile) storageFile.write(fields.join(',') + '\n')
+      // if (storageFilefr) storageFilefr.write(fieldsfr.join(',') + '\n')
+      Bluetooth.println(
+        JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'es.unileon.apptivate.bangle_broadcast', package: 'es.unileon.apptivate', extra: { isFr: 1, message: fieldsfr.join(',') } })
+      )
 
+      if (entriesWritten % fr == 0) {
+        // if (storageFile) storageFile.write(fields.join(',') + '\n')
         Bluetooth.println(
-          JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'es.unileon.apptivate.local_broadcast', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!1' } })
+          JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'es.unileon.apptivate.bangle_broadcast', package: 'es.unileon.apptivate', extra: { isFr: 0, message: fields.join(',') } })
         )
-        Bluetooth.println(
-          JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'es.unileon.apptivate.LOCAL_BROADCAST', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!2' } })
-        )
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'local_broadcast', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!3' } }))
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'LOCAL_BROADCAST', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!4' } }))
-        Bluetooth.println(
-          JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'es.unileon.apptivate.bangle_broadcast', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!5' } })
-        )
-        Bluetooth.println(
-          JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'es.unileon.apptivate.BANGLE_BROADCAST', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!6' } })
-        )
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'bangle_broadcast', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!7' } }))
-        Bluetooth.println(
-          JSON.stringify({ t: 'intent', target: 'foregroundservice', action: 'es.unileon.apptivate.local_broadcast', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!8' } })
-        )
-        Bluetooth.println(
-          JSON.stringify({ t: 'intent', target: 'foregroundservice', action: 'es.unileon.apptivate.LOCAL_BROADCAST', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!9' } })
-        )
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'foregroundservice', action: 'local_broadcast', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!10' } }))
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'foregroundservice', action: 'LOCAL_BROADCAST', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!11' } }))
-        Bluetooth.println(
-          JSON.stringify({ t: 'intent', target: 'foregroundservice', action: 'es.unileon.apptivate.bangle_broadcast', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!12' } })
-        )
-        Bluetooth.println(
-          JSON.stringify({ t: 'intent', target: 'foregroundservice', action: 'es.unileon.apptivate.BANGLE_BROADCAST', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!13' } })
-        )
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'foregroundservice', action: 'bangle_broadcast', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!14' } }))
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'action', action: 'es.unileon.apptivate.local_broadcast', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!15' } }))
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'action', action: 'es.unileon.apptivate.LOCAL_BROADCAST', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!16' } }))
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'action', action: 'local_broadcast', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!17' } }))
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'action', action: 'LOCAL_BROADCAST', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!18' } }))
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'action', action: 'es.unileon.apptivate.bangle_broadcast', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!19' } }))
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'action', action: 'es.unileon.apptivate.BANGLE_BROADCAST', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!20' } }))
-        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'action', action: 'bangle_broadcast', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!21' } }))
-        Bluetooth.println(JSON.stringify({ t: 'int­ent', action: 'es.unileon.apptivate.local_broadcast', extra: { location: 'asdfas22' } }))
-        Bluetooth.println(JSON.stringify({ t: 'int­ent', action: 'es.unileon.apptivate.LOCAL_broadcast', extra: { location: 'asdfas23' } }))
-        Bluetooth.println(JSON.stringify({ t: 'int­ent', action: 'local_broadcast', extra: { location: 'asdfas24' } }))
-        Bluetooth.println(JSON.stringify({ t: 'int­ent', action: 'LOCAL_BROADCAST', extra: { location: 'asdfas25' } }))
-        Bluetooth.println(JSON.stringify({ t: 'int­ent', action: 'es.unileon.apptivate.bangle_broadcast', extra: { message: 'asdfas26' } }))
-        Bluetooth.println(JSON.stringify({ t: 'int­ent', action: 'es.unileon.apptivate.BANGLE_BROADCAST', extra: { message: 'asdfas27' } }))
-        Bluetooth.println(JSON.stringify({ t: 'int­ent', action: 'bangle_broadcast', extra: { message: 'asdfas28' } }))
-        Bluetooth.println(JSON.stringify({ t: 'int­ent', action: 'BANGLE_BROADCAST', extra: { message: 'asdfas29' } }))
       }
 
       entriesWritten++
