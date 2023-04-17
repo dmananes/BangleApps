@@ -2,8 +2,8 @@
   "recording": false,
   "file": "apptivate.log0.csv",
   "filefr": "apptivate.logfr0.csv",
-  "period": 5,
-  "fr": 24,
+  "period": 0.5,
+  "fr": 240,
   "round": true,
   "record": ["acc", "hrm", "mag", "steps", "baro"]
 }
