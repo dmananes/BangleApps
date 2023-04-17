@@ -334,6 +334,21 @@
         if (storageFile) storageFile.write(fields.join(',') + '\n')
 
         Bluetooth.println(
+          JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'es.unileon.apptivate.local_broadcast', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!' } })
+        )
+        Bluetooth.println(
+          JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'es.unileon.apptivate.LOCAL_BROADCAST', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!' } })
+        )
+        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'local_broadcast', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!' } }))
+        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'LOCAL_BROADCAST', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!' } }))
+        Bluetooth.println(
+          JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'es.unileon.apptivate.bangle_broadcast', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!' } })
+        )
+        Bluetooth.println(
+          JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'es.unileon.apptivate.BANGLE_BROADCAST', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!' } })
+        )
+        Bluetooth.println(JSON.stringify({ t: 'intent', target: 'broadcastreceiver', action: 'bangle_broadcast', package: 'es.unileon.apptivate', extra: { message: 'FROM BANGLE!!' } }))
+        Bluetooth.println(
           JSON.stringify({ t: 'intent', target: 'foregroundservice', action: 'es.unileon.apptivate.local_broadcast', package: 'es.unileon.apptivate', extra: { location: 'FROM BANGLE!!' } })
         )
         Bluetooth.println(
