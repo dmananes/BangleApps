@@ -219,6 +219,8 @@
           name: 'HEALTH',
           fields: ['Movement', 'Steps', 'Bpm', 'BpmConfidence'],
           getValues: () => {
+            var info = Bangle.getHealthStatus()
+            onHealth(info)
             var r = [movement, steps, bpm, bpmConfidence]
             movement = ''
             steps = ''
@@ -227,10 +229,10 @@
             return r
           },
           start: () => {
-            Bangle.on('health', onHealth)
+            // Bangle.on('health', onHealth)
           },
           stop: () => {
-            Bangle.removeListener('health', onHealth)
+            // Bangle.removeListener('health', onHealth)
           },
           draw: (x, y) => g.reset().drawImage(atob('DAwBAAMMeeeeeeeecOMMAAMMMMAA'), x, y)
         }
@@ -256,7 +258,7 @@
           fields: ['Steps'],
           getValues: () => {
             var c = Bangle.getStepCount()
-            var r = [c - lastSteps]
+            var r = [c] // - lastSteps]
             lastSteps = c
             return r
           },
