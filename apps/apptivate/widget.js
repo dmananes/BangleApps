@@ -184,7 +184,7 @@
         }
         return {
           isFrequent: false,
-          name: 'HR',
+          name: 'HRM',
           fields: ['Heartrate', 'HrConfidence'],
           getValues: () => {
             var r = [bpm, confidence]
@@ -201,6 +201,38 @@
             Bangle.setHRMPower(0, 'apptivate')
           },
           draw: (x, y) => g.setColor(Bangle.isHRMOn() ? '#f00' : '#f88').drawImage(atob('DAwBAAAAMMeef+f+f+P8H4DwBgAA'), x, y)
+        }
+      },
+      health: function () {
+        var movement = ''
+        var steps = ''
+        var bpm = ''
+        var bpmConfidence = ''
+        function onHealth(info) {
+          movement = info.movement
+          steps = info.steps
+          bpm = info.bpm
+          bpmConfidence = info.bpmConfidence
+        }
+        return {
+          isFrequent: false,
+          name: 'HEALTH',
+          fields: ['Movement', 'Steps', 'Bpm', 'BpmConfidence'],
+          getValues: () => {
+            var r = [movement, steps, bpm, bpmConfidence]
+            movement = ''
+            steps = ''
+            bpm = ''
+            bpmConfidence = ''
+            return r
+          },
+          start: () => {
+            Bangle.on('health', onHealth)
+          },
+          stop: () => {
+            Bangle.removeListener('health', onHealth)
+          },
+          draw: (x, y) => g.reset().drawImage(atob('DAwBAAMMeeeeeeeecOMMAAMMMMAA'), x, y)
         }
       },
       bat: function () {
