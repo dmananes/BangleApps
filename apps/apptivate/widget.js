@@ -1,6 +1,6 @@
 {
-  let fr = 240
-  let round = true
+  let fr = 1200
+  let round = false
 
   let storageFile // file for GPS track
   let storageFilefr
@@ -11,7 +11,7 @@
   let loadSettings = function () {
     var settings = require('Storage').readJSON('apptivate.json', 1) || {}
     settings.period = settings.period || 0.5
-    settings.fr = settings.fr || 240
+    settings.fr = settings.fr || 1200
     settings.round = settings.round || true
     if (!settings.file || !settings.file.startsWith('apptivate.log')) settings.recording = false
     return settings
@@ -204,36 +204,16 @@
         }
       },
       health: function () {
-        var movement = ''
-        var steps = ''
-        var bpm = ''
-        var bpmConfidence = ''
-        function onHealth(info) {
-          movement = info.movement
-          steps = info.steps
-          bpm = info.bpm
-          bpmConfidence = info.bpmConfidence
-        }
         return {
           isFrequent: false,
           name: 'HEALTH',
           fields: ['Movement', 'Steps', 'Bpm', 'BpmConfidence'],
           getValues: () => {
-            var info = Bangle.getHealthStatus()
-            onHealth(info)
-            var r = [movement, steps, bpm, bpmConfidence]
-            movement = ''
-            steps = ''
-            bpm = ''
-            bpmConfidence = ''
-            return r
+            var info = Bangle.getHealthStatus('last')
+            return [info.movement, info.steps, info.bpm, info.bpmConfidence]
           },
-          start: () => {
-            // Bangle.on('health', onHealth)
-          },
-          stop: () => {
-            // Bangle.removeListener('health', onHealth)
-          },
+          start: () => {},
+          stop: () => {},
           draw: (x, y) => g.reset().drawImage(atob('DAwBAAMMeeeeeeeecOMMAAMMMMAA'), x, y)
         }
       },

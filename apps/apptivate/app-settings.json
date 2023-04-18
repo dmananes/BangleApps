@@ -3,7 +3,7 @@
   "file": "apptivate.log0.csv",
   "filefr": "apptivate.logfr0.csv",
   "period": 0.5,
-  "fr": 240,
+  "fr": 1200,
   "round": true,
-  "record": ["acc", "hrm", "mag", "baro", "health"]
+  "record": ["acc", "mag", "baro", "health"]
 }
