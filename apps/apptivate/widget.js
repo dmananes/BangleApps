@@ -1,6 +1,5 @@
 {
-  let minimumBmpConfidence = 80
-  let fr = 24
+  let fr = 240
   let round = true
 
   let storageFile // file for GPS track
@@ -178,20 +177,19 @@
       },
       hrm: function () {
         var bpm = ''
+        var confidence = ''
         function onHRM(h) {
-          if (h.confidence >= minimumBmpConfidence) {
-            bpm = h.bpm
-          } else {
-            bpm = ''
-          }
+          bpm = h.bpm
+          confidence = h.confidence
         }
         return {
           isFrequent: false,
           name: 'HR',
-          fields: ['Heartrate'],
+          fields: ['Heartrate', 'HrConfidence'],
           getValues: () => {
-            var r = [bpm]
+            var r = [bpm, confidence]
             bpm = ''
+            confidence = ''
             return r
           },
           start: () => {
@@ -225,8 +223,8 @@
           name: 'Steps',
           fields: ['Steps'],
           getValues: () => {
-            var c = Bangle.getStepCount(),
-              r = [c - lastSteps]
+            var c = Bangle.getStepCount()
+            var r = c - lastSteps
             lastSteps = c
             return r
           },
