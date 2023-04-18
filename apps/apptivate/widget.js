@@ -224,7 +224,7 @@
           fields: ['Steps'],
           getValues: () => {
             var c = Bangle.getStepCount()
-            var r = c - lastSteps
+            var r = [c - lastSteps]
             lastSteps = c
             return r
           },
