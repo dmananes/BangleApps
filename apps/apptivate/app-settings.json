@@ -5,5 +5,5 @@
   "period": 0.5,
   "fr": 1200,
   "round": true,
-  "record": ["acc", "mag", "baro", "health"]
+  "record": ["acc", "mag", "baro", "health", "hrm"]
 }
