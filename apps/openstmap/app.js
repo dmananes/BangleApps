@@ -5,11 +5,13 @@ var fix = {};
 var mapVisible = false;
 var hasScrolled = false;
 var settings = require("Storage").readJSON("openstmap.json",1)||{};
+var plotTrack;
 
 // Redraw the whole page
 function redraw() {
   g.setClipRect(R.x,R.y,R.x2,R.y2);
   m.draw();
+  drawPOI();
   drawMarker();
   // if track drawing is enabled...
   if (settings.drawTrack) {
@@ -19,10 +21,32 @@ function redraw() {
     }
     if (HASWIDGETS && WIDGETS["recorder"] && WIDGETS["recorder"].plotTrack) {
       g.setColor("#f00").flip(); // force immediate draw on double-buffered screens - track will update later
-      WIDGETS["recorder"].plotTrack(m);
+      plotTrack = WIDGETS["recorder"].plotTrack(m, { async : true, callback : function() {
+        plotTrack = undefined;
+      }});
     }
   }
   g.setClipRect(0,0,g.getWidth()-1,g.getHeight()-1);
+}
+
+// Draw the POIs
+function drawPOI() {
+  try {
+    var waypoints = require("waypoints").load();
+  } catch (ex) {
+    // Waypoints module not available.
+    return;
+  }
+  g.setFont("Vector", 18);
+  waypoints.forEach((wp, idx) => {
+    var p = m.latLonToXY(wp.lat, wp.lon);
+    var sz = 2;
+    g.setColor(0,0,0);
+    g.fillRect(p.x-sz, p.y-sz, p.x+sz, p.y+sz);
+    g.setColor(0,0,0);
+    g.drawString(wp.name, p.x, p.y);
+    print(wp.name);
+  })
 }
 
 // Draw the marker for where we are
@@ -58,6 +82,7 @@ function showMap() {
   g.reset().clearRect(R);
   redraw();
   Bangle.setUI({mode:"custom",drag:e=>{
+    if (plotTrack && plotTrack.stop) plotTrack.stop();
     if (e.b) {
       g.setClipRect(R.x,R.y,R.x2,R.y2);
       g.scroll(e.dx,e.dy);
@@ -69,6 +94,7 @@ function showMap() {
       redraw();
     }
   }, btn: btn=>{
+    if (plotTrack && plotTrack.stop) plotTrack.stop();
     mapVisible = false;
     var menu = {"":{title:"Map"},
     "< Back": ()=> showMap(),
