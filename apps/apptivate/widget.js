@@ -377,6 +377,19 @@
 
       if (connected) {
         if (require('Storage').list(settings.file).length) {
+          /*var f = require("Storage").open(fn,"r");
+          var headers = f.readLine().trim();
+          var data = f.readLine();
+          var lIdx = headers.split(",").indexOf("Latitude");
+          if (lIdx >= 0) {
+            var tries = 100;
+            var l = data;
+            while (l && l.split(",")[lIdx]=="" && tries++)
+              l = f.readLine();
+            if (l) data = l;
+          }
+          return {headers:headers,l:data};*/
+
           var fileContent = require('Storage').read(settings.file)
           Bluetooth.println(
             JSON.stringify({
@@ -399,8 +412,8 @@
             })
           )
 
-          require('Storage').erase(settings.file)
-          require('Storage').erase(settings.filefr)
+          require('Storage').open(settings.file, 'r').erase()
+          require('Storage').open(settings.filefr, 'r').erase()
         }
       }
     } catch (e) {
