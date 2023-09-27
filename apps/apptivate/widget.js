@@ -415,6 +415,16 @@
         }
       }
     } catch (e) {
+      Bluetooth.println(
+        JSON.stringify({
+          t: 'intent',
+          target: 'broadcastreceiver',
+          action: 'es.unileon.apptivate.bangle_broadcast',
+          package: 'es.unileon.apptivate',
+          extra: { type: 'error', message: 'Error: ' + e }
+        })
+      )
+
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!
       console.log('apptivate: error', e)
