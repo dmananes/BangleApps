@@ -412,8 +412,8 @@
             })
           )
 
-          require('Storage').open(settings.file, 'r').erase()
-          require('Storage').open(settings.filefr, 'r').erase()
+          if (storageFile) storageFile.erase()
+          if (storageFilefr) storageFilefr.erase()
         }
       }
     } catch (e) {
