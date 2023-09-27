@@ -377,40 +377,38 @@
 
       if (connected) {
         if (require('Storage').list(settings.file).length) {
-          /*var f = require("Storage").open(fn,"r");
-          var headers = f.readLine().trim();
-          var data = f.readLine();
-          var lIdx = headers.split(",").indexOf("Latitude");
-          if (lIdx >= 0) {
-            var tries = 100;
-            var l = data;
-            while (l && l.split(",")[lIdx]=="" && tries++)
-              l = f.readLine();
-            if (l) data = l;
+          if (storageFile) {
+            var fileContent = storageFile.readLine()
+
+            Bluetooth.println(
+              JSON.stringify({
+                t: 'intent',
+                target: 'broadcastreceiver',
+                action: 'es.unileon.apptivate.bangle_broadcast',
+                package: 'es.unileon.apptivate',
+                extra: { type: 'file', message: fileContent }
+              })
+            )
           }
-          return {headers:headers,l:data};*/
 
-          var fileContent = 'Contenido de fichero file' //require('Storage').read(settings.file)
-          Bluetooth.println(
-            JSON.stringify({
-              t: 'intent',
-              target: 'broadcastreceiver',
-              action: 'es.unileon.apptivate.bangle_broadcast',
-              package: 'es.unileon.apptivate',
-              extra: { type: 'file', message: fileContent }
-            })
-          )
+          if (storageFilefr) {
+            var line = storageFilefr.readLine()
+            var data = line
+            while (line && line.length > 0) {
+              line = storageFilefr.readLine()
+              data += line
+            }
 
-          fileContent = 'Contenido de fichero filefr' // require('Storage').read(settings.filefr)
-          Bluetooth.println(
-            JSON.stringify({
-              t: 'intent',
-              target: 'broadcastreceiver',
-              action: 'es.unileon.apptivate.bangle_broadcast',
-              package: 'es.unileon.apptivate',
-              extra: { type: 'filefr', message: fileContent }
-            })
-          )
+            Bluetooth.println(
+              JSON.stringify({
+                t: 'intent',
+                target: 'broadcastreceiver',
+                action: 'es.unileon.apptivate.bangle_broadcast',
+                package: 'es.unileon.apptivate',
+                extra: { type: 'filefr', message: data }
+              })
+            )
+          }
 
           // if (storageFile) storageFile.erase()
           // if (storageFilefr) storageFilefr.erase()
