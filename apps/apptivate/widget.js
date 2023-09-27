@@ -350,11 +350,11 @@
             target: 'broadcastreceiver',
             action: 'es.unileon.apptivate.bangle_broadcast',
             package: 'es.unileon.apptivate',
-            extra: { type: 'fr', message: fieldsfr.join(',') }
+            extra: { type: 'fr', message: fieldsfr.join(';') }
           })
         )
       } else {
-        if (storageFilefr) storageFilefr.write(fieldsfr.join(',') + '\n') // NO FILE
+        if (storageFilefr) storageFilefr.write(fieldsfr.join(';') + '\n') // NO FILE
       }
 
       if (entriesWritten % fr == 0) {
@@ -365,11 +365,11 @@
               target: 'broadcastreceiver',
               action: 'es.unileon.apptivate.bangle_broadcast',
               package: 'es.unileon.apptivate',
-              extra: { type: 'normal', message: fields.join(',') }
+              extra: { type: 'normal', message: fields.join(';') }
             })
           )
         } else {
-          if (storageFile) storageFile.write(fields.join(',') + '\n') // NO FILE
+          if (storageFile) storageFile.write(fields.join(';') + '\n') // NO FILE
         }
       }
 
@@ -390,7 +390,7 @@
           }
           return {headers:headers,l:data};*/
 
-          var fileContent = require('Storage').read(settings.file)
+          var fileContent = 'Contenido de fichero file' //require('Storage').read(settings.file)
           Bluetooth.println(
             JSON.stringify({
               t: 'intent',
@@ -401,7 +401,7 @@
             })
           )
 
-          fileContent = require('Storage').read(settings.filefr)
+          fileContent = 'Contenido de fichero filefr' // require('Storage').read(settings.filefr)
           Bluetooth.println(
             JSON.stringify({
               t: 'intent',
@@ -412,8 +412,8 @@
             })
           )
 
-          if (storageFile) storageFile.erase()
-          if (storageFilefr) storageFilefr.erase()
+          // if (storageFile) storageFile.erase()
+          // if (storageFilefr) storageFilefr.erase()
         }
       }
     } catch (e) {
@@ -478,7 +478,7 @@
               target: 'broadcastreceiver',
               action: 'es.unileon.apptivate.bangle_broadcast',
               package: 'es.unileon.apptivate',
-              extra: { type: 'fr', message: fieldsfr.join(',') }
+              extra: { type: 'fr', message: fieldsfr.join(';') }
             })
           )
           Bluetooth.println(
@@ -487,12 +487,12 @@
               target: 'broadcastreceiver',
               action: 'es.unileon.apptivate.bangle_broadcast',
               package: 'es.unileon.apptivate',
-              extra: { type: 'normal', message: fields.join(',') }
+              extra: { type: 'normal', message: fields.join(';') }
             })
           )
         } else {
-          storageFile.write(fields.join(',') + '\n') // NO FILE
-          storageFilefr.write(fieldsfr.join(',') + '\n') // NO FILE
+          storageFile.write(fields.join(';') + '\n') // NO FILE
+          storageFilefr.write(fieldsfr.join(';') + '\n') // NO FILE
         }
       }
       // start recording...
