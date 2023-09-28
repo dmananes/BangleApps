@@ -378,13 +378,12 @@
       // Try to send offline files stored
       if (connected) {
         if (require('Storage').list(settings.file).length) {
-          var fileContent = 'init'
+          var fileContent = ''
           var file = require('Storage').open(settings.file, 'r')
           var line = file.readLine()
-          fileContent += line
           while (line !== undefined) {
-            line = file.readLine()
             fileContent += line
+            line = file.readLine()
           }
 
           Bluetooth.println(
@@ -396,14 +395,14 @@
               extra: { type: 'file', message: fileContent }
             })
           )
+          file.erase()
 
-          fileContent = 'initfr'
+          fileContent = ''
           var filefr = require('Storage').open(settings.filefr, 'r')
           line = filefr.readLine()
-          fileContent += line
           while (line !== undefined) {
-            line = filefr.readLine()
             fileContent += line
+            line = filefr.readLine()
           }
 
           Bluetooth.println(
@@ -415,10 +414,8 @@
               extra: { type: 'filefr', message: fileContent }
             })
           )
+          filefr.erase()
         }
-
-        file.erase()
-        filefr.erase()
       }
     } catch (e) {
       Bluetooth.println(
@@ -427,7 +424,7 @@
           target: 'broadcastreceiver',
           action: 'es.unileon.apptivate.bangle_broadcast',
           package: 'es.unileon.apptivate',
-          extra: { type: 'error', message: 'Error' }
+          extra: { type: 'error', message: 'Error: ' + e }
         })
       )
 
