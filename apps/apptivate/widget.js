@@ -484,8 +484,7 @@
 
       sendError.then(function () {
         // Force reload
-        // WIDGETS['apptivate'].setRecording(1, true /*force append*/)
-        reload()
+        WIDGETS['apptivate'].setRecording(1, true /*force append*/)
       })
 
       /*
@@ -527,23 +526,35 @@
         })
         WIDGETS['apptivate'].width = 15 + ((activeRecorders.length + 1) >> 1) * 12 // 12px per recorder
         // open/create file
+        var existsFile = false
+        var existsFilefr = false
         if (require('Storage').list(settings.file).length) {
           // Append
           storageFile = require('Storage').open(settings.file, 'a')
-          storageFilefr = require('Storage').open(settings.filefr, 'a')
+          existsFile = true
           // TODO: what if loaded modules are different??
         } else {
           storageFile = require('Storage').open(settings.file, 'w')
+        }
+        if (require('Storage').list(settings.filefr).length) {
+          // Append
+          storageFilefr = require('Storage').open(settings.filefr, 'a')
+          existsFilefr = true
+          // TODO: what if loaded modules are different??
+        } else {
           storageFilefr = require('Storage').open(settings.filefr, 'w')
-          // New file - write headers
-          var fields = ['Time'] // NO FILE
-          var fieldsfr = ['Time'] // NO FILE
-          activeRecorders.forEach((recorder) => {
-            if (!recorder.isFrequent) fields.push.apply(fields, recorder.fields)
-            else fieldsfr.push.apply(fieldsfr, recorder.fields)
-          })
+        }
 
-          if (NRF.getSecurityStatus().connected) {
+        // New file - write headers
+        var fields = ['Time'] // NO FILE
+        var fieldsfr = ['Time'] // NO FILE
+        activeRecorders.forEach((recorder) => {
+          if (!recorder.isFrequent) fields.push.apply(fields, recorder.fields)
+          else fieldsfr.push.apply(fieldsfr, recorder.fields)
+        })
+
+        if (NRF.getSecurityStatus().connected) {
+          if (!existsFilefr) {
             Bluetooth.println(
               JSON.stringify({
                 t: 'intent',
@@ -553,6 +564,8 @@
                 extra: { type: 'fr', message: fieldsfr.join(';') }
               })
             )
+          }
+          if (!existsFile) {
             Bluetooth.println(
               JSON.stringify({
                 t: 'intent',
@@ -562,11 +575,17 @@
                 extra: { type: 'normal', message: fields.join(';') }
               })
             )
-          } else {
+          }
+        } else {
+          if (!existsFile) {
             storageFile.write(fields.join(';') + '\n') // NO FILE
+          }
+
+          if (!existsFilefr) {
             storageFilefr.write(fieldsfr.join(';') + '\n') // NO FILE
           }
         }
+
         // start recording...
         WIDGETS['apptivate'].draw()
         writeInterval = setInterval(writeLog, settings.period * 1000)
