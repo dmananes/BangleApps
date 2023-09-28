@@ -396,9 +396,13 @@
             })
           )
 
-          fileContent = ''
+          if (require('Storage').list(settings.file).length) require('Storage').open(settings.file, 'r').erase()
+        }
+
+        if (require('Storage').list(settings.filefr).length) {
+          let fileContent = ''
           let filefr = require('Storage').open(settings.filefr, 'r')
-          line = filefr.readLine()
+          let line = filefr.readLine()
           while (line !== undefined) {
             fileContent += line
             line = filefr.readLine()
@@ -414,8 +418,7 @@
             })
           )
 
-          require('Storage').open(settings.file, 'r').erase()
-          require('Storage').open(settings.filefr, 'r').erase()
+          if (require('Storage').list(settings.filefr).length) require('Storage').open(settings.filefr, 'r').erase()
         }
       }
     } catch (e) {
