@@ -341,7 +341,7 @@
     try {
       let connected = NRF.getSecurityStatus().connected
 
-      let date = new Date(Math.round(getTime()))
+      let date = new Date(Math.round(getTime()) * 1000)
       let date_str =
         date.getFullYear() +
         '' +
