@@ -338,6 +338,16 @@
       let bytesFree = require('Storage').getFree()
       let freeSpace = bytesFree > 500000
 
+      Bluetooth.println(
+        JSON.stringify({
+          t: 'intent',
+          target: 'broadcastreceiver',
+          action: 'es.unileon.apptivate.bangle_broadcast',
+          package: 'es.unileon.apptivate',
+          extra: { type: 'debug', message: 'connected: ' + connected + ' - bytesFree: ' + bytesFree + ' - freeSpace: ' + freeSpace }
+        })
+      )
+
       var fields = [Math.round(getTime())] // NO FILE
       var fieldsfr = [Math.round(getTime())] // NO FILE
       activeRecorders.forEach((recorder) => {
@@ -380,54 +390,63 @@
       // Try to send offline files stored
       if (connected) {
         if (require('Storage').list(settings.file).length) {
-          let fileContent = ''
-          let file = require('Storage').open(settings.file, 'r')
-          let line = file.readLine()
-          while (line !== undefined) {
-            fileContent += line
-            line = file.readLine()
-          }
+          let sendFile = new Promise(function (resolve, reject) {
+            let fileContent = ''
+            let file = require('Storage').open(settings.file, 'r')
+            let line = file.readLine()
+            while (line !== undefined) {
+              fileContent += line
+              line = file.readLine()
+            }
 
-          Bluetooth.println(
-            JSON.stringify({
-              t: 'intent',
-              target: 'broadcastreceiver',
-              action: 'es.unileon.apptivate.bangle_broadcast',
-              package: 'es.unileon.apptivate',
-              extra: { type: 'file', message: fileContent }
-            })
-          )
+            Bluetooth.println(
+              JSON.stringify({
+                t: 'intent',
+                target: 'broadcastreceiver',
+                action: 'es.unileon.apptivate.bangle_broadcast',
+                package: 'es.unileon.apptivate',
+                extra: { type: 'file', message: fileContent }
+              })
+            )
 
-          if (require('Storage').list(settings.file).length) require('Storage').open(settings.file, 'r').erase()
+            resolve()
+          })
+          sendFile.then(function () {
+            if (require('Storage').list(settings.file).length) require('Storage').open(settings.file, 'r').erase()
+          })
         }
 
         if (require('Storage').list(settings.filefr).length) {
-          let fileContent = ''
-          let filefr = require('Storage').open(settings.filefr, 'r')
-          let line = filefr.readLine()
-          while (line !== undefined) {
-            fileContent += line
-            line = filefr.readLine()
-          }
+          let sendFile = new Promise(function (resolve, reject) {
+            let fileContent = ''
+            let filefr = require('Storage').open(settings.filefr, 'r')
+            let line = filefr.readLine()
+            while (line !== undefined) {
+              fileContent += line
+              line = filefr.readLine()
+            }
 
-          Bluetooth.println(
-            JSON.stringify({
-              t: 'intent',
-              target: 'broadcastreceiver',
-              action: 'es.unileon.apptivate.bangle_broadcast',
-              package: 'es.unileon.apptivate',
-              extra: { type: 'filefr', message: fileContent }
-            })
-          )
+            Bluetooth.println(
+              JSON.stringify({
+                t: 'intent',
+                target: 'broadcastreceiver',
+                action: 'es.unileon.apptivate.bangle_broadcast',
+                package: 'es.unileon.apptivate',
+                extra: { type: 'filefr', message: fileContent }
+              })
+            )
 
-          if (require('Storage').list(settings.filefr).length) require('Storage').open(settings.filefr, 'r').erase()
+            resolve()
+          })
+          sendFile.then(function () {
+            if (require('Storage').list(settings.filefr).length) require('Storage').open(settings.filefr, 'r').erase()
+          })
         }
       }
     } catch (e) {
       // Force reload
       WIDGETS['apptivate'].setRecording(1, true /*force append*/)
 
-      /*
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!
       Bluetooth.println(
@@ -440,6 +459,7 @@
         })
       )
 
+      /*
       console.log('apptivate: error', e)
       var settings = loadSettings()
       settings.recording = false
