@@ -424,6 +424,10 @@
         }
       }
     } catch (e) {
+      // Force reload
+      WIDGETS['apptivate'].setRecording(1, true /*force append*/)
+
+      /*
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!
       Bluetooth.println(
@@ -441,6 +445,7 @@
       settings.recording = false
       require('Storage').write('apptivate.json', settings)
       reload()
+      */
     }
   }
 
