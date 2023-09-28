@@ -336,6 +336,7 @@
     try {
       let connected = NRF.getSecurityStatus().connected
       let bytesFree = require('Storage').getFree()
+      let freeSpace = bytesFree > 500000
 
       var fields = [Math.round(getTime())] // NO FILE
       var fieldsfr = [Math.round(getTime())] // NO FILE
@@ -355,7 +356,7 @@
           })
         )
       } else {
-        if (storageFilefr && bytesFree > 500000) storageFilefr.write(fieldsfr.join(';') + '\n') // NO FILE
+        if (storageFilefr && freeSpace) storageFilefr.write(fieldsfr.join(';') + '\n') // NO FILE
       }
 
       if (entriesWritten % fr == 0) {
@@ -370,7 +371,7 @@
             })
           )
         } else {
-          if (storageFile && bytesFree > 500000) storageFile.write(fields.join(';') + '\n') // NO FILE
+          if (storageFile && freeSpace) storageFile.write(fields.join(';') + '\n') // NO FILE
         }
       }
 
@@ -435,11 +436,10 @@
         })
       )
 
-      /*
       console.log('apptivate: error', e)
       var settings = loadSettings()
       settings.recording = false
-      require('Storage').write('apptivate.json', settings) */
+      require('Storage').write('apptivate.json', settings)
       reload()
     }
   }
