@@ -425,7 +425,7 @@
     } catch (e) {
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!
-      /* Bluetooth.println(
+      Bluetooth.println(
         JSON.stringify({
           t: 'intent',
           target: 'broadcastreceiver',
@@ -435,6 +435,7 @@
         })
       )
 
+      /*
       console.log('apptivate: error', e)
       var settings = loadSettings()
       settings.recording = false
