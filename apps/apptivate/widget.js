@@ -334,9 +334,9 @@
   let writeLog = function () {
     WIDGETS['apptivate'].draw()
     try {
-      var connected = NRF.getSecurityStatus().connected
+      let connected = NRF.getSecurityStatus().connected
 
-      var fields = [Math.round(getTime())] // NO FILE
+      var fields = [Math.round(getTime())] // NO FILE # Convert to string
       var fieldsfr = [Math.round(getTime())] // NO FILE
       activeRecorders.forEach((recorder) => {
         if (!recorder.isFrequent) fields.push.apply(fields, recorder.getValues())
@@ -378,9 +378,9 @@
       // Try to send offline files stored
       if (connected) {
         if (require('Storage').list(settings.file).length) {
-          var fileContent = ''
-          var file = require('Storage').open(settings.file, 'r')
-          var line = file.readLine()
+          let fileContent = ''
+          let file = require('Storage').open(settings.file, 'r')
+          let line = file.readLine()
           while (line !== undefined) {
             fileContent += line
             line = file.readLine()
@@ -395,10 +395,9 @@
               extra: { type: 'file', message: fileContent }
             })
           )
-          file.erase()
 
           fileContent = ''
-          var filefr = require('Storage').open(settings.filefr, 'r')
+          let filefr = require('Storage').open(settings.filefr, 'r')
           line = filefr.readLine()
           while (line !== undefined) {
             fileContent += line
@@ -414,7 +413,9 @@
               extra: { type: 'filefr', message: fileContent }
             })
           )
-          filefr.erase()
+
+          require('Storage').open(settings.file, 'r').erase()
+          require('Storage').open(settings.filefr, 'r').erase()
         }
       }
     } catch (e) {
