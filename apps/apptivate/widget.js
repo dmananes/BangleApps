@@ -343,7 +343,6 @@
       console.log('bytesFree: ' + bytesFree)
       let freeSpace = bytesFree > 500000
       console.log('freeSpace: ' + freeSpace)
-      console.log('settings: ' + settings)
 
       var fields = [Math.round(getTime())] // NO FILE
       var fieldsfr = [Math.round(getTime())] // NO FILE
@@ -386,10 +385,10 @@
 
       // Try to send offline files stored
       if (connected) {
-        if (require('Storage').list(settings.file).length) {
+        if (require('Storage').list('apptivate.log0.csv').length) {
           let sendFile = new Promise(function (resolve, reject) {
             let fileContent = ''
-            let file = require('Storage').open(settings.file, 'r')
+            let file = require('Storage').open('apptivate.log0.csv', 'r')
             let line = file.readLine()
             while (line !== undefined) {
               fileContent += line
@@ -407,17 +406,9 @@
             )
 
             try {
-              require('Storage').open(settings.file, 'r').erase()
+              require('Storage').open('apptivate.log0.csv', 'r').erase()
             } catch (e) {
-              Bluetooth.println(
-                JSON.stringify({
-                  t: 'intent',
-                  target: 'broadcastreceiver',
-                  action: 'es.unileon.apptivate.bangle_broadcast',
-                  package: 'es.unileon.apptivate',
-                  extra: { type: 'error', message: 'Error deleting file: ' + e + ' - settings: ' + settings }
-                })
-              )
+              console.log(e)
             }
 
             resolve()
@@ -425,9 +416,9 @@
           sendFile.then(function () {})
         }
 
-        if (require('Storage').list(settings.filefr).length) {
+        if (require('Storage').list('apptivate.logfr0.csv').length) {
           let sendFile = new Promise(function (resolve, reject) {
-            let filefr = require('Storage').open(settings.filefr, 'r')
+            let filefr = require('Storage').open('apptivate.logfr0.csv', 'r')
             let line = filefr.readLine()
             while (line !== undefined) {
               Bluetooth.println(
@@ -444,17 +435,9 @@
             }
 
             try {
-              require('Storage').open(settings.filefr, 'r').erase()
+              require('Storage').open('apptivate.logfr0.csv', 'r').erase()
             } catch (e) {
-              Bluetooth.println(
-                JSON.stringify({
-                  t: 'intent',
-                  target: 'broadcastreceiver',
-                  action: 'es.unileon.apptivate.bangle_broadcast',
-                  package: 'es.unileon.apptivate',
-                  extra: { type: 'error', message: 'Error deleting filefr: ' + e + ' - settings: ' + settings }
-                })
-              )
+              console.log(e)
             }
 
             resolve()
@@ -468,7 +451,6 @@
       // GPS recording so we don't keep getting errors!
 
       // Force reload
-      var settings = loadSettings()
       WIDGETS['apptivate'].setRecording(1, true /*force append*/)
 
       /*
