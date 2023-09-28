@@ -466,6 +466,7 @@
         }
       }
     } catch (e) {
+      console.log(e)
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!
       let sendError = new Promise(function (resolve, reject) {
@@ -595,6 +596,7 @@
         storageFilefr = undefined
       }
     } catch (e) {
+      console.log(e)
       Bluetooth.println(
         JSON.stringify({
           t: 'intent',
