@@ -335,6 +335,7 @@
     WIDGETS['apptivate'].draw()
     try {
       let connected = NRF.getSecurityStatus().connected
+      let bytesFree = require('Storage').getFree()
 
       var fields = [Math.round(getTime())] // NO FILE
       var fieldsfr = [Math.round(getTime())] // NO FILE
@@ -354,7 +355,7 @@
           })
         )
       } else {
-        if (storageFilefr) storageFilefr.write(fieldsfr.join(';') + '\n' + require('Storage').getFree() + '\n') // NO FILE
+        if (storageFilefr && bytesFree > 500000) storageFilefr.write(fieldsfr.join(';') + '\n') // NO FILE
       }
 
       if (entriesWritten % fr == 0) {
@@ -369,7 +370,7 @@
             })
           )
         } else {
-          if (storageFile) storageFile.write(fields.join(';') + '\n') // NO FILE
+          if (storageFile && bytesFree > 500000) storageFile.write(fields.join(';') + '\n') // NO FILE
         }
       }
 
@@ -422,7 +423,9 @@
         }
       }
     } catch (e) {
-      Bluetooth.println(
+      // If storage.write caused an error, disable
+      // GPS recording so we don't keep getting errors!
+      /* Bluetooth.println(
         JSON.stringify({
           t: 'intent',
           target: 'broadcastreceiver',
@@ -432,13 +435,11 @@
         })
       )
 
-      // If storage.write caused an error, disable
-      // GPS recording so we don't keep getting errors!
       console.log('apptivate: error', e)
       var settings = loadSettings()
       settings.recording = false
       require('Storage').write('apptivate.json', settings)
-      reload()
+      reload() */
     }
   }
 
