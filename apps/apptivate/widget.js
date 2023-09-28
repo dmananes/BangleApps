@@ -378,7 +378,7 @@
       // Try to send offline files stored
       if (connected) {
         if (require('Storage').list(settings.file).length) {
-          var fileContent = ''
+          var fileContent = 'init'
           var file = require('Storage').open(settings.file, 'r')
           var line = file.readLine()
           fileContent += line
@@ -397,8 +397,8 @@
             })
           )
 
-          fileContent = ''
-          var filefr = require('Storage').open(settings.file, 'r')
+          fileContent = 'initfr'
+          var filefr = require('Storage').open(settings.filefr, 'r')
           line = filefr.readLine()
           fileContent += line
           while (line !== undefined) {
