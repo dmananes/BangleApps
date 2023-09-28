@@ -391,6 +391,7 @@
       if (connected) {
         if (require('Storage').list(settings.file).length) {
           let sendFile = new Promise(function (resolve, reject) {
+            var settings = loadSettings()
             let fileContent = ''
             let file = require('Storage').open(settings.file, 'r')
             let line = file.readLine()
@@ -419,6 +420,7 @@
 
         if (require('Storage').list(settings.filefr).length) {
           let sendFile = new Promise(function (resolve, reject) {
+            var settings = loadSettings()
             let fileContent = ''
             let filefr = require('Storage').open(settings.filefr, 'r')
             let line = filefr.readLine()
