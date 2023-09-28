@@ -338,6 +338,8 @@
       let bytesFree = require('Storage').getFree()
       let freeSpace = bytesFree > 500000
 
+      if (settings == null || settings == undefined) settings = loadSettings()
+
       Bluetooth.println(
         JSON.stringify({
           t: 'intent',
