@@ -344,7 +344,7 @@
           target: 'broadcastreceiver',
           action: 'es.unileon.apptivate.bangle_broadcast',
           package: 'es.unileon.apptivate',
-          extra: { type: 'debug', message: 'connected: ' + connected + ' - bytesFree: ' + bytesFree + ' - freeSpace: ' + freeSpace }
+          extra: { type: 'debug', message: 'connected: ' + connected + ' - bytesFree: ' + bytesFree + ' - freeSpace: ' + freeSpace + ' - settings: ' + settings }
         })
       )
 
@@ -391,7 +391,6 @@
       if (connected) {
         if (require('Storage').list(settings.file).length) {
           let sendFile = new Promise(function (resolve, reject) {
-            var settings = loadSettings()
             let fileContent = ''
             let file = require('Storage').open(settings.file, 'r')
             let line = file.readLine()
@@ -452,18 +451,24 @@
     } catch (e) {
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!
-      Bluetooth.println(
-        JSON.stringify({
-          t: 'intent',
-          target: 'broadcastreceiver',
-          action: 'es.unileon.apptivate.bangle_broadcast',
-          package: 'es.unileon.apptivate',
-          extra: { type: 'error', message: 'Error: ' + e }
-        })
-      )
+      let sendError = new Promise(function (resolve, reject) {
+        Bluetooth.println(
+          JSON.stringify({
+            t: 'intent',
+            target: 'broadcastreceiver',
+            action: 'es.unileon.apptivate.bangle_broadcast',
+            package: 'es.unileon.apptivate',
+            extra: { type: 'error', message: 'Error: ' + e }
+          })
+        )
 
-      // Force reload
-      WIDGETS['apptivate'].setRecording(1, true /*force append*/)
+        resolve()
+      })
+
+      sendError.then(function () {
+        // Force reload
+        WIDGETS['apptivate'].setRecording(1, true /*force append*/)
+      })
 
       /*
       console.log('apptivate: error', e)
