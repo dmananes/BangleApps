@@ -410,17 +410,15 @@
               })
             )
 
+            if (require('Storage').list(settings.file).length) require('Storage').open(settings.file, 'r').erase()
+
             resolve()
           })
-          sendFile.then(function () {
-            var settings = loadSettings()
-            if (require('Storage').list(settings.file).length) require('Storage').open(settings.file, 'r').erase()
-          })
+          sendFile.then(function () {})
         }
 
         if (require('Storage').list(settings.filefr).length) {
-          let sendFile = new Promise(function (resolve, reject) {
-            var settings = loadSettings()
+          let readFile = new Promise(function (resolve, reject) {
             let fileContent = ''
             let filefr = require('Storage').open(settings.filefr, 'r')
             let line = filefr.readLine()
@@ -429,21 +427,25 @@
               line = filefr.readLine()
             }
 
-            Bluetooth.println(
-              JSON.stringify({
-                t: 'intent',
-                target: 'broadcastreceiver',
-                action: 'es.unileon.apptivate.bangle_broadcast',
-                package: 'es.unileon.apptivate',
-                extra: { type: 'filefr', message: fileContent }
-              })
-            )
-
-            resolve()
+            resolve(fileContent, settings)
           })
-          sendFile.then(function () {
-            var settings = loadSettings()
-            if (require('Storage').list(settings.filefr).length) require('Storage').open(settings.filefr, 'r').erase()
+          readFile.then(function (fileContent, settings) {
+            let sendFile = new Promise(function (resolve, reject) {
+              Bluetooth.println(
+                JSON.stringify({
+                  t: 'intent',
+                  target: 'broadcastreceiver',
+                  action: 'es.unileon.apptivate.bangle_broadcast',
+                  package: 'es.unileon.apptivate',
+                  extra: { type: 'filefr', message: fileContent }
+                })
+              )
+              resolve(settings)
+            })
+
+            sendFile.then(function (settings) {
+              if (require('Storage').list(settings.filefr).length) require('Storage').open(settings.filefr, 'r').erase()
+            })
           })
         }
       }
