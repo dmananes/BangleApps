@@ -429,7 +429,7 @@
             resolve(fileContent, settings)
           })
           readFile.then(function (fileContent, settings) {
-            let sendFile = new Promise(function (resolve, reject) {
+            let sendFile = new Promise(function (resolve2, reject2) {
               Bluetooth.println(
                 JSON.stringify({
                   t: 'intent',
@@ -439,11 +439,23 @@
                   extra: { type: 'filefr', message: fileContent }
                 })
               )
-              resolve(settings)
+              resolve2(settings)
             })
 
             sendFile.then(function (settings) {
-              if (require('Storage').list(settings.filefr).length) require('Storage').open(settings.filefr, 'r').erase()
+              try {
+                if (require('Storage').list(settings.filefr).length) require('Storage').open(settings.filefr, 'r').erase()
+              } catch (e) {
+                Bluetooth.println(
+                  JSON.stringify({
+                    t: 'intent',
+                    target: 'broadcastreceiver',
+                    action: 'es.unileon.apptivate.bangle_broadcast',
+                    package: 'es.unileon.apptivate',
+                    extra: { type: 'error', message: 'Error deleting file: ' + e + ' - settings: ' + settings }
+                  })
+                )
+              }
             })
           })
         }
