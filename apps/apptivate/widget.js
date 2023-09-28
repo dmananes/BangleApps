@@ -1,14 +1,14 @@
 {
-  let fr = 1200
-  let round = false
+  var fr = 1200
+  var round = false
 
-  let storageFile // file for GPS track
-  let storageFilefr
-  let entriesWritten = 0
-  let activeRecorders = []
-  let writeInterval
+  var storageFile // file for GPS track
+  var storageFilefr
+  var entriesWritten = 0
+  var activeRecorders = []
+  var writeInterval
 
-  let loadSettings = function () {
+  var loadSettings = function () {
     var settings = require('Storage').readJSON('apptivate.json', 1) || {}
     settings.period = settings.period || 0.5
     settings.fr = settings.fr || 1200
@@ -17,12 +17,12 @@
     return settings
   }
 
-  let updateSettings = function (settings) {
+  var updateSettings = function (settings) {
     require('Storage').writeJSON('apptivate.json', settings)
     if (WIDGETS['apptivate']) WIDGETS['apptivate'].reload()
   }
 
-  let getRecorders = function () {
+  var getRecorders = function () {
     var recorders = {
       gps: function () {
         var lat = 0
@@ -331,7 +331,7 @@
     return recorders
   }
 
-  let writeLog = function () {
+  var writeLog = function () {
     WIDGETS['apptivate'].draw()
     try {
       let connected = NRF.getSecurityStatus().connected
@@ -409,7 +409,19 @@
               })
             )
 
-            if (require('Storage').list(settings.file).length) require('Storage').open(settings.file, 'r').erase()
+            try {
+              require('Storage').open(settings.file, 'r').erase()
+            } catch (e) {
+              Bluetooth.println(
+                JSON.stringify({
+                  t: 'intent',
+                  target: 'broadcastreceiver',
+                  action: 'es.unileon.apptivate.bangle_broadcast',
+                  package: 'es.unileon.apptivate',
+                  extra: { type: 'error', message: 'Error deleting file: ' + e + ' - settings: ' + settings }
+                })
+              )
+            }
 
             resolve()
           })
@@ -435,7 +447,7 @@
             }
 
             try {
-              if (require('Storage').list(settings.filefr).length) require('Storage').open(settings.filefr, 'r').erase()
+              require('Storage').open(settings.filefr, 'r').erase()
             } catch (e) {
               Bluetooth.println(
                 JSON.stringify({
@@ -443,7 +455,7 @@
                   target: 'broadcastreceiver',
                   action: 'es.unileon.apptivate.bangle_broadcast',
                   package: 'es.unileon.apptivate',
-                  extra: { type: 'error', message: 'Error deleting file: ' + e + ' - settings: ' + settings }
+                  extra: { type: 'error', message: 'Error deleting filefr: ' + e + ' - settings: ' + settings }
                 })
               )
             }
@@ -472,7 +484,8 @@
 
       sendError.then(function () {
         // Force reload
-        WIDGETS['apptivate'].setRecording(1, true /*force append*/)
+        // WIDGETS['apptivate'].setRecording(1, true /*force append*/)
+        reload()
       })
 
       /*
