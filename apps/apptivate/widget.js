@@ -22,6 +22,11 @@
     if (WIDGETS['apptivate']) WIDGETS['apptivate'].reload()
   }
 
+  let zeroPad = function (num, places) {
+    let zero = places - num.toString().length + 1
+    return Array(+(zero > 0 && zero)).join('0') + num
+  }
+
   let getRecorders = function () {
     var recorders = {
       gps: function () {
@@ -336,8 +341,22 @@
     try {
       let connected = NRF.getSecurityStatus().connected
 
-      var fields = [Math.round(getTime())] // NO FILE # Convert to string
-      var fieldsfr = [Math.round(getTime())] // NO FILE
+      let date = new Date(Math.round(getTime()))
+      let date_str =
+        date.getFullYear() +
+        '' +
+        zeroPad(date.getMonth() + 1, 2) +
+        '' +
+        zeroPad(date.getDate(), 2) +
+        '_' +
+        zeroPad(date.getHours(), 2) +
+        '' +
+        zeroPad(date.getMinutes(), 2) +
+        '' +
+        zeroPad(date.getSeconds(), 2)
+
+      var fields = [date_str] // NO FILE # Convert to string
+      var fieldsfr = [date_str] // NO FILE
       activeRecorders.forEach((recorder) => {
         if (!recorder.isFrequent) fields.push.apply(fields, recorder.getValues())
         else fieldsfr.push.apply(fieldsfr, recorder.getValues())
