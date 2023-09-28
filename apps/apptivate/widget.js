@@ -417,29 +417,24 @@
         }
 
         if (require('Storage').list(settings.filefr).length) {
-          let readFile = new Promise(function (resolve, reject) {
-            let fileContent = ''
+          let sendFile = new Promise(function (resolve, reject) {
             let filefr = require('Storage').open(settings.filefr, 'r')
             let line = filefr.readLine()
             while (line !== undefined) {
-              fileContent += line
-              line = filefr.readLine()
-            }
-
-            resolve(fileContent)
-          })
-          readFile.then(function (fileContent) {
-            try {
               Bluetooth.println(
                 JSON.stringify({
                   t: 'intent',
                   target: 'broadcastreceiver',
                   action: 'es.unileon.apptivate.bangle_broadcast',
                   package: 'es.unileon.apptivate',
-                  extra: { type: 'filefr', message: fileContent }
+                  extra: { type: 'filefr', message: line }
                 })
               )
 
+              line = filefr.readLine()
+            }
+
+            try {
               if (require('Storage').list(settings.filefr).length) require('Storage').open(settings.filefr, 'r').erase()
             } catch (e) {
               Bluetooth.println(
@@ -452,7 +447,10 @@
                 })
               )
             }
+
+            resolve()
           })
+          sendFile.then(function () {})
         }
       }
     } catch (e) {
@@ -489,79 +487,91 @@
 
   // Called by the GPS app to reload settings and decide what to do
   let reload = function () {
-    var settings = loadSettings()
-    if (writeInterval) clearInterval(writeInterval)
-    writeInterval = undefined
+    try {
+      var settings = loadSettings()
+      if (writeInterval) clearInterval(writeInterval)
+      writeInterval = undefined
 
-    activeRecorders.forEach((rec) => rec.stop())
-    activeRecorders = []
-    entriesWritten = 0
+      activeRecorders.forEach((rec) => rec.stop())
+      activeRecorders = []
+      entriesWritten = 0
 
-    if (settings.recording) {
-      fr = settings.fr
-      round = settings.round
-      // set up recorders
-      var recorders = getRecorders() // TODO: order??
-      settings.record.forEach((r) => {
-        var recorder = recorders[r]
-        if (!recorder) {
-          console.log(/*LANG*/ 'Recorder for ' + E.toJS(r) + /*LANG*/ '+not found')
-          return
-        }
-        var activeRecorder = recorder()
-        activeRecorder.start()
-        activeRecorders.push(activeRecorder)
-        // TODO: write field names?
-      })
-      WIDGETS['apptivate'].width = 15 + ((activeRecorders.length + 1) >> 1) * 12 // 12px per recorder
-      // open/create file
-      if (require('Storage').list(settings.file).length) {
-        // Append
-        storageFile = require('Storage').open(settings.file, 'a')
-        storageFilefr = require('Storage').open(settings.filefr, 'a')
-        // TODO: what if loaded modules are different??
-      } else {
-        storageFile = require('Storage').open(settings.file, 'w')
-        storageFilefr = require('Storage').open(settings.filefr, 'w')
-        // New file - write headers
-        var fields = ['Time'] // NO FILE
-        var fieldsfr = ['Time'] // NO FILE
-        activeRecorders.forEach((recorder) => {
-          if (!recorder.isFrequent) fields.push.apply(fields, recorder.fields)
-          else fieldsfr.push.apply(fieldsfr, recorder.fields)
+      if (settings.recording) {
+        fr = settings.fr
+        round = settings.round
+        // set up recorders
+        var recorders = getRecorders() // TODO: order??
+        settings.record.forEach((r) => {
+          var recorder = recorders[r]
+          if (!recorder) {
+            console.log(/*LANG*/ 'Recorder for ' + E.toJS(r) + /*LANG*/ '+not found')
+            return
+          }
+          var activeRecorder = recorder()
+          activeRecorder.start()
+          activeRecorders.push(activeRecorder)
+          // TODO: write field names?
         })
-
-        if (NRF.getSecurityStatus().connected) {
-          Bluetooth.println(
-            JSON.stringify({
-              t: 'intent',
-              target: 'broadcastreceiver',
-              action: 'es.unileon.apptivate.bangle_broadcast',
-              package: 'es.unileon.apptivate',
-              extra: { type: 'fr', message: fieldsfr.join(';') }
-            })
-          )
-          Bluetooth.println(
-            JSON.stringify({
-              t: 'intent',
-              target: 'broadcastreceiver',
-              action: 'es.unileon.apptivate.bangle_broadcast',
-              package: 'es.unileon.apptivate',
-              extra: { type: 'normal', message: fields.join(';') }
-            })
-          )
+        WIDGETS['apptivate'].width = 15 + ((activeRecorders.length + 1) >> 1) * 12 // 12px per recorder
+        // open/create file
+        if (require('Storage').list(settings.file).length) {
+          // Append
+          storageFile = require('Storage').open(settings.file, 'a')
+          storageFilefr = require('Storage').open(settings.filefr, 'a')
+          // TODO: what if loaded modules are different??
         } else {
-          storageFile.write(fields.join(';') + '\n') // NO FILE
-          storageFilefr.write(fieldsfr.join(';') + '\n') // NO FILE
+          storageFile = require('Storage').open(settings.file, 'w')
+          storageFilefr = require('Storage').open(settings.filefr, 'w')
+          // New file - write headers
+          var fields = ['Time'] // NO FILE
+          var fieldsfr = ['Time'] // NO FILE
+          activeRecorders.forEach((recorder) => {
+            if (!recorder.isFrequent) fields.push.apply(fields, recorder.fields)
+            else fieldsfr.push.apply(fieldsfr, recorder.fields)
+          })
+
+          if (NRF.getSecurityStatus().connected) {
+            Bluetooth.println(
+              JSON.stringify({
+                t: 'intent',
+                target: 'broadcastreceiver',
+                action: 'es.unileon.apptivate.bangle_broadcast',
+                package: 'es.unileon.apptivate',
+                extra: { type: 'fr', message: fieldsfr.join(';') }
+              })
+            )
+            Bluetooth.println(
+              JSON.stringify({
+                t: 'intent',
+                target: 'broadcastreceiver',
+                action: 'es.unileon.apptivate.bangle_broadcast',
+                package: 'es.unileon.apptivate',
+                extra: { type: 'normal', message: fields.join(';') }
+              })
+            )
+          } else {
+            storageFile.write(fields.join(';') + '\n') // NO FILE
+            storageFilefr.write(fieldsfr.join(';') + '\n') // NO FILE
+          }
         }
+        // start recording...
+        WIDGETS['apptivate'].draw()
+        writeInterval = setInterval(writeLog, settings.period * 1000)
+      } else {
+        WIDGETS['apptivate'].width = 0
+        storageFile = undefined
+        storageFilefr = undefined
       }
-      // start recording...
-      WIDGETS['apptivate'].draw()
-      writeInterval = setInterval(writeLog, settings.period * 1000)
-    } else {
-      WIDGETS['apptivate'].width = 0
-      storageFile = undefined
-      storageFilefr = undefined
+    } catch (e) {
+      Bluetooth.println(
+        JSON.stringify({
+          t: 'intent',
+          target: 'broadcastreceiver',
+          action: 'es.unileon.apptivate.bangle_broadcast',
+          package: 'es.unileon.apptivate',
+          extra: { type: 'error', message: 'Error in reload(): ' + e }
+        })
+      )
     }
   }
   // add the widget
