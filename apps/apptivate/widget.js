@@ -338,8 +338,6 @@
       let bytesFree = require('Storage').getFree()
       let freeSpace = bytesFree > 500000
 
-      if (settings == null || settings == undefined) settings = loadSettings()
-
       Bluetooth.println(
         JSON.stringify({
           t: 'intent',
@@ -414,6 +412,7 @@
             resolve()
           })
           sendFile.then(function () {
+            var settings = loadSettings()
             if (require('Storage').list(settings.file).length) require('Storage').open(settings.file, 'r').erase()
           })
         }
@@ -441,14 +440,12 @@
             resolve()
           })
           sendFile.then(function () {
+            var settings = loadSettings()
             if (require('Storage').list(settings.filefr).length) require('Storage').open(settings.filefr, 'r').erase()
           })
         }
       }
     } catch (e) {
-      // Force reload
-      WIDGETS['apptivate'].setRecording(1, true /*force append*/)
-
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!
       Bluetooth.println(
@@ -460,6 +457,9 @@
           extra: { type: 'error', message: 'Error: ' + e }
         })
       )
+
+      // Force reload
+      WIDGETS['apptivate'].setRecording(1, true /*force append*/)
 
       /*
       console.log('apptivate: error', e)
