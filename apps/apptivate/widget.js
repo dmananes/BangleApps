@@ -378,43 +378,47 @@
       // Try to send offline files stored
       if (connected) {
         if (require('Storage').list(settings.file).length) {
-          if (storageFile) {
-            var fileContent = 'readLine()' // storageFile.readLine()
-
-            Bluetooth.println(
-              JSON.stringify({
-                t: 'intent',
-                target: 'broadcastreceiver',
-                action: 'es.unileon.apptivate.bangle_broadcast',
-                package: 'es.unileon.apptivate',
-                extra: { type: 'file', message: fileContent }
-              })
-            )
+          var fileContent = ''
+          var file = require('Storage').open(settings.file, 'r')
+          var line = file.readLine()
+          fileContent += line
+          while (line !== undefined) {
+            line = file.readLine()
+            fileContent += line
           }
 
-          if (storageFilefr) {
-            var line = storageFilefr.readLine()
-            var data = line
-            while (line && line.length > 0) {
-              line = storageFilefr.readLine()
-              data += line
-            }
+          Bluetooth.println(
+            JSON.stringify({
+              t: 'intent',
+              target: 'broadcastreceiver',
+              action: 'es.unileon.apptivate.bangle_broadcast',
+              package: 'es.unileon.apptivate',
+              extra: { type: 'file', message: fileContent }
+            })
+          )
 
-            Bluetooth.println(
-              JSON.stringify({
-                t: 'intent',
-                target: 'broadcastreceiver',
-                action: 'es.unileon.apptivate.bangle_broadcast',
-                package: 'es.unileon.apptivate',
-                extra: { type: 'filefr', message: data }
-              })
-            )
+          fileContent = ''
+          var filefr = require('Storage').open(settings.file, 'r')
+          line = filefr.readLine()
+          fileContent += line
+          while (line !== undefined) {
+            line = filefr.readLine()
+            fileContent += line
           }
 
-          // if (storageFile) storageFile.erase()
-          // if (storageFilefr) storageFilefr.erase()
-          require('Storage').open(settings.file, 'r').erase()
+          Bluetooth.println(
+            JSON.stringify({
+              t: 'intent',
+              target: 'broadcastreceiver',
+              action: 'es.unileon.apptivate.bangle_broadcast',
+              package: 'es.unileon.apptivate',
+              extra: { type: 'filefr', message: fileContent }
+            })
+          )
         }
+
+        file.erase()
+        filefr.erase()
       }
     } catch (e) {
       Bluetooth.println(
