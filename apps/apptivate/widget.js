@@ -1,14 +1,14 @@
 {
-  var fr = 1200
-  var round = false
+  let fr = 1200
+  let round = false
 
-  var storageFile // file for GPS track
-  var storageFilefr
-  var entriesWritten = 0
-  var activeRecorders = []
-  var writeInterval
+  let storageFile // file for GPS track
+  let storageFilefr
+  let entriesWritten = 0
+  let activeRecorders = []
+  let writeInterval
 
-  var loadSettings = function () {
+  let loadSettings = function () {
     var settings = require('Storage').readJSON('apptivate.json', 1) || {}
     settings.period = settings.period || 0.5
     settings.fr = settings.fr || 1200
@@ -17,12 +17,12 @@
     return settings
   }
 
-  var updateSettings = function (settings) {
+  let updateSettings = function (settings) {
     require('Storage').writeJSON('apptivate.json', settings)
     if (WIDGETS['apptivate']) WIDGETS['apptivate'].reload()
   }
 
-  var getRecorders = function () {
+  let getRecorders = function () {
     var recorders = {
       gps: function () {
         var lat = 0
@@ -331,7 +331,7 @@
     return recorders
   }
 
-  var writeLog = function () {
+  let writeLog = function () {
     try {
       console.log('writeLog')
       WIDGETS['apptivate'].draw()
@@ -343,16 +343,7 @@
       console.log('bytesFree: ' + bytesFree)
       let freeSpace = bytesFree > 500000
       console.log('freeSpace: ' + freeSpace)
-
-      Bluetooth.println(
-        JSON.stringify({
-          t: 'intent',
-          target: 'broadcastreceiver',
-          action: 'es.unileon.apptivate.bangle_broadcast',
-          package: 'es.unileon.apptivate',
-          extra: { type: 'debug', message: 'connected: ' + connected + ' - bytesFree: ' + bytesFree + ' - freeSpace: ' + freeSpace + ' - settings: ' + settings }
-        })
-      )
+      console.log('settings: ' + settings)
 
       var fields = [Math.round(getTime())] // NO FILE
       var fieldsfr = [Math.round(getTime())] // NO FILE
@@ -472,27 +463,13 @@
         }
       }
     } catch (e) {
-      console.log(e)
+      console.log('apptivate: error', e)
       // If storage.write caused an error, disable
       // GPS recording so we don't keep getting errors!
-      let sendError = new Promise(function (resolve, reject) {
-        Bluetooth.println(
-          JSON.stringify({
-            t: 'intent',
-            target: 'broadcastreceiver',
-            action: 'es.unileon.apptivate.bangle_broadcast',
-            package: 'es.unileon.apptivate',
-            extra: { type: 'error', message: 'Error: ' + e }
-          })
-        )
 
-        resolve()
-      })
-
-      sendError.then(function () {
-        // Force reload
-        WIDGETS['apptivate'].setRecording(1, true /*force append*/)
-      })
+      // Force reload
+      var settings = loadSettings()
+      WIDGETS['apptivate'].setRecording(1, true /*force append*/)
 
       /*
       console.log('apptivate: error', e)
@@ -605,7 +582,7 @@
         storageFilefr = undefined
       }
     } catch (e) {
-      console.log(e)
+      console.log('Error in reload' + e)
       Bluetooth.println(
         JSON.stringify({
           t: 'intent',
