@@ -438,8 +438,8 @@
       console.log('apptivate: error', e)
       var settings = loadSettings()
       settings.recording = false
-      require('Storage').write('apptivate.json', settings)
-      reload() */
+      require('Storage').write('apptivate.json', settings) */
+      reload()
     }
   }
 
