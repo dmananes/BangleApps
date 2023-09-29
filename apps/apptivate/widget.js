@@ -333,16 +333,11 @@
 
   let writeLog = function () {
     try {
-      console.log('writeLog')
       WIDGETS['apptivate'].draw()
-      console.log('after draw')
 
       let connected = NRF.getSecurityStatus().connected
-      console.log('connected: ' + connected)
       let bytesFree = require('Storage').getFree()
-      console.log('bytesFree: ' + bytesFree)
       let freeSpace = bytesFree > 500000
-      console.log('freeSpace: ' + freeSpace)
 
       var fields = [Math.round(getTime())] // NO FILE
       var fieldsfr = [Math.round(getTime())] // NO FILE
@@ -542,7 +537,6 @@
               })
             )
           }
-          console.log('Sent init headers')
         } else {
           if (!existsFile) {
             storageFile.write(fields.join(';') + '\n') // NO FILE
@@ -553,11 +547,9 @@
           }
         }
 
-        console.log('Start recording...')
         // start recording...
         WIDGETS['apptivate'].draw()
         writeInterval = setInterval(writeLog, settings.period * 1000)
-        console.log('Iterval configured')
       } else {
         WIDGETS['apptivate'].width = 0
         storageFile = undefined

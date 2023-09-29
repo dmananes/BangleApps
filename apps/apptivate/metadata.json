@@ -2,7 +2,7 @@
   "id": "apptivate",
   "name": "Apptivate",
   "shortName": "Apptivate",
-  "version": "0.06",
+  "version": "0.07",
   "description": "Record GPS position, heart rate and more in the background, and send it to Android.",
   "icon": "app.png",
   "tags": "tool,outdoors,gps,widget",
